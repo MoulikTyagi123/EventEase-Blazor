@@ -1,0 +1,123 @@
+@page "/register/{EventId:int}"
+@using EventEaseApp.Models
+@using EventEaseApp.Services
+@inject NavigationManager Navigation
+@inject EventService EventService
+
+<div class="registration-container">
+    @if (currentEvent == null)
+    {
+        <p><em>Loading registration form...</em></p>
+    }
+    else
+    {
+        <div class="breadcrumb">
+            <a href="/event-details/@EventId" class="breadcrumb-link">← Back to Event Details</a>
+        </div>
+
+        <div class="registration-card">
+            <div class="registration-header">
+                <h1>Register for Event</h1>
+                <p class="event-title">@currentEvent.Name</p>
+            </div>
+
+            <div class="registration-content">
+                <form @onsubmit="SubmitRegistration">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" class="form-control" @bind="firstName"
+                            placeholder="Enter your first name" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" class="form-control" @bind="lastName"
+                            placeholder="Enter your last name" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" class="form-control" @bind="email"
+                            placeholder="your.email@example.com" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Company/Organization</label>
+                        <input type="text" id="company" class="form-control" @bind="company"
+                            placeholder="Your company name" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Additional Notes</label>
+                        <textarea id="notes" class="form-control" rows="4" @bind="notes"
+                        placeholder="Any special requirements or comments..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" id="terms" @bind="agreedToTerms" required />
+                        <label for="terms" class="checkbox-label">I agree to the event terms and conditions *</label>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success">
+                            @successMessage
+                        </div>
+                    }
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">Confirm Registration</button>
+                        <button type="button" class="btn btn-secondary btn-lg" @onclick="Cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private Event? currentEvent;
+    private string firstName = string.Empty;
+    private string lastName = string.Empty;
+    private string email = string.Empty;
+    private string company = string.Empty;
+    private string notes = string.Empty;
+    private bool agreedToTerms = false;
+    private string successMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentEvent = EventService.GetEventById(EventId);
+    }
+
+    private async Task SubmitRegistration()
+    {
+        if (!agreedToTerms)
+        {
+            successMessage = "Please agree to the terms and conditions.";
+            return;
+        }
+
+        // Simulate registration
+        if (currentEvent != null && currentEvent.RegisteredCount < currentEvent.Capacity)
+        {
+            currentEvent.RegisteredCount++;
+            successMessage = "✓ Registration successful! You will receive a confirmation email shortly.";
+
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/events");
+        }
+        else
+        {
+            successMessage = "✗ Unable to register. Event is full or unavailable.";
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo($"/event-details/{EventId}");
+    }
+}

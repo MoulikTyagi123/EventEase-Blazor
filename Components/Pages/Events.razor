@@ -1,0 +1,48 @@
+@page "/events"
+@using EventEaseApp.Models
+@using EventEaseApp.Services
+@inject NavigationManager Navigation
+@inject EventService EventService
+
+<div class="events-container">
+    <h1>📋 Browse Events</h1>
+    <p class="subtitle">Discover and register for amazing corporate and social events</p>
+
+    <div class="events-grid">
+        @if (events == null)
+        {
+            <p><em>Loading events...</em></p>
+        }
+        else if (!events.Any())
+        {
+            <p><em>No events available at the moment.</em></p>
+        }
+        else
+        {
+            @foreach (var eventItem in events)
+            {
+                <EventCard Event="eventItem" OnDetailsClick="ViewEventDetails" OnRegisterClick="RegisterForEvent" />
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<Event>? events;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load mock events
+        events = EventService.GetMockEvents();
+    }
+
+    private void ViewEventDetails(int eventId)
+    {
+        Navigation.NavigateTo($"/event-details/{eventId}");
+    }
+
+    private void RegisterForEvent(int eventId)
+    {
+        Navigation.NavigateTo($"/register/{eventId}");
+    }
+}

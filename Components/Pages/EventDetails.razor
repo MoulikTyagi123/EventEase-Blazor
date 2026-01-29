@@ -1,0 +1,82 @@
+@page "/event-details/{EventId:int}"
+@using EventEaseApp.Models
+@using EventEaseApp.Services
+@inject NavigationManager Navigation
+@inject EventService EventService
+
+<div class="event-details-container">
+    @if (currentEvent == null)
+    {
+        <p><em>Loading event details...</em></p>
+    }
+    else
+    {
+        <div class="breadcrumb">
+            <a href="/events" class="breadcrumb-link">← Back to Events</a>
+        </div>
+
+        <div class="event-details-card">
+            <div class="event-details-header">
+                <h1>@currentEvent.Name</h1>
+            </div>
+
+            <div class="event-details-content">
+                <div class="detail-section">
+                    <h3>Event Information</h3>
+                    <div class="detail-item">
+                        <span class="label">📅 Date & Time:</span>
+                        <span class="value">@currentEvent.Date.ToString("MMMM dd, yyyy @ h:mm tt")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">📍 Location:</span>
+                        <span class="value">@currentEvent.Location</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">👥 Capacity:</span>
+                        <span class="value">@currentEvent.RegisteredCount of @currentEvent.Capacity registered</span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Description</h3>
+                    <p class="description">@currentEvent.Description</p>
+                </div>
+
+                <div class="availability-indicator">
+                    @if (currentEvent.RegisteredCount < currentEvent.Capacity)
+                    {
+                        <span class="badge badge-available">✓ Spots Available</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-full">✗ Event Full</span>
+                    }
+                </div>
+            </div>
+
+            <div class="event-details-footer">
+                <button class="btn btn-primary btn-lg" @onclick="GoToRegistration"
+                    disabled="@(currentEvent.RegisteredCount >= currentEvent.Capacity)">
+                    Register Now
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private Event? currentEvent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentEvent = EventService.GetEventById(EventId);
+    }
+
+    private void GoToRegistration()
+    {
+        Navigation.NavigateTo($"/register/{EventId}");
+    }
+}
