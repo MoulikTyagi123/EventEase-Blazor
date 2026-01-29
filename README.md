@@ -2,7 +2,13 @@
 
 **EventEase** is a modern Blazor Web Application for corporate and social event management, built with Microsoft's latest web technologies and best practices.
 
-![EventEase Banner](https://via.placeholder.com/800x200?text=EventEase+Event+Management)
+<img width="1913" height="920" alt="image" src="https://github.com/user-attachments/assets/0fe31404-398d-4ebd-bade-f6bd36df1bd1" />
+
+<img width="1910" height="557" alt="image" src="https://github.com/user-attachments/assets/542e74ed-5042-4ed9-b0c3-5efae8cfd85e" />
+
+<img width="1905" height="905" alt="image" src="https://github.com/user-attachments/assets/b680158f-b346-4ab2-a480-8ae820f8c602" />
+
+
 
 ## 📋 Project Overview
 
